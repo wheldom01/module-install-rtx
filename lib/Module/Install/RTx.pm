@@ -139,6 +139,11 @@ install ::
         $has_etc{upgrade}++;
     }
 
+    my %has_patches;
+    if ( -d 'patches' ) {
+        $has_patches{patches}++;
+    }
+
     $self->postamble("$postamble\n");
     if ( $path{lib} ) {
         $self->makemaker_args( INSTALLSITELIB => $path{'lib'} );
@@ -179,6 +184,12 @@ install ::
             $self->postamble("upgrade-database ::\n$upgradedb\n");
             $self->postamble("upgradedb ::\n$upgradedb\n");
         }
+    }
+
+    if (%has_patches) {
+        print "For first-time installation, type 'make patch'.\n";
+        my $patch = qq|\t\$(NOECHO) \$(PERL) -Ilib -I"$local_lib_path" -I"$lib_path" -Iinc -MModule::Install::RTx::Runtime -e"RTxPatch(qw(/usr/bin/patch ./patches))"\n|;
+        $self->postamble("patch ::\n$patch\n");
     }
 
 }
