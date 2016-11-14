@@ -63,7 +63,7 @@ sub RTxPatch {
 
     _rt_runtime_load();
 
-    my $cmd = "$patch -d $ENV{RTHOME} -p1 < ";
+    my $cmd = "$patch -d $RT::BasePath -p1 < ";
 
     # Anonymous subroutine to apply all patches in a directory structure
     my $patch_rt = sub {
@@ -71,7 +71,7 @@ sub RTxPatch {
         return unless -f $_;
         if ($_ =~ m/.patch/xms) {
             WIFEXITED(system($cmd . $_))
-                or croak "Couldn't run: $cmd $_ ($OS_ERROR)";
+                or croak "Couldn't run: $cmd $_ ($?)\n";
         }
     };
 
